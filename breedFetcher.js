@@ -1,17 +1,20 @@
 const request = require('request');
-let address = 'https://api.thecatapill.com/v1/breeds/search?q=';
-const args = process.argv;
-const result = args.slice(2);
-address += result;
+let address = 'https://api.thecatapi.com/v1/breeds/search?q=';
 
-request(address, (error, response, body) => {
-  if (error) {
-    return console.log(error);
-  }
-  const data = JSON.parse(body);
-  if (!data[0]) {
-    console.log("The breed is not found.");
-  } else {
-    console.log(data[0]['description']);
-  }
-});
+const fetchBreedDescription = (breedName, callback) => {
+  request(`${address}${breedName}`, (error, response, body) => {
+    if(error) {
+      callback(error, null)
+    }
+    const data = JSON.parse(body);
+    if(!data[0]) {
+      callback(error, null);
+    } else (
+      // console.log(data[0].description)
+      callback(null, data[0].description.trim())
+    )
+     
+  });
+};
+
+module.exports = { fetchBreedDescription };
